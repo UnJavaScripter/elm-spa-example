@@ -189,7 +189,7 @@ update user msg model =
 
         CreateCompleted (Err error) ->
             ( { model
-                | errors = model.errors ++ [ ( Form, "Server error while attempting to publish article" ) ]
+                | errors = List.append model.errors [ ( Form, "Server error while attempting to publish article" ) ]
                 , isSaving = False
               }
             , Cmd.none
@@ -202,7 +202,7 @@ update user msg model =
 
         EditCompleted (Err error) ->
             ( { model
-                | errors = model.errors ++ [ ( Form, "Server error while attempting to save article" ) ]
+                | errors = List.append model.errors [ ( Form, "Server error while attempting to save article" ) ]
                 , isSaving = False
               }
             , Cmd.none
