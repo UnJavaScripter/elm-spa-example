@@ -72,7 +72,7 @@ view session model =
 
         isMyProfile =
             session.user
-                |> Maybe.map (\{ username } -> username == profile.username)
+                |> Maybe.map (\{ username } -> Username.eq username profile.username)
                 |> Maybe.withDefault False
     in
     { title =

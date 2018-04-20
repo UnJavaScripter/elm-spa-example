@@ -19,7 +19,7 @@ overkill, so we use simpler APIs instead.
 import Browser
 import Data.Article as Article exposing (Article)
 import Data.Article.Feed exposing (Feed)
-import Data.Article.Slug as ArticleSlug
+import Data.Article.Slug as Slug
 import Data.Article.Tag as Tag exposing (Tag)
 import Data.AuthToken exposing (AuthToken)
 import Data.Session exposing (Session)
@@ -345,7 +345,7 @@ fetch token page feedSource =
 
 replaceArticle : Article a -> Article a -> Article a
 replaceArticle newArticle oldArticle =
-    if newArticle.slug == oldArticle.slug then
+    if Slug.eq newArticle.slug oldArticle.slug then
         newArticle
     else
         oldArticle
@@ -384,7 +384,7 @@ selectFeedSource source sources =
 
         first :: rest ->
             SelectList.fromLists [] first rest
-                |> SelectList.select ((==) source)
+                |> SelectList.select (FeedSource.eq source)
 
 
 isTagFeed : FeedSource -> Bool
