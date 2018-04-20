@@ -157,10 +157,12 @@ viewCurrentPage session isLoading page =
         Editor maybeSlug subModel ->
             let
                 framePage =
-                    if maybeSlug == Nothing then
-                        Page.NewArticle
-                    else
-                        Page.Other
+                    case maybeSlug of
+                        Nothing ->
+                            Page.NewArticle
+
+                        Just _ ->
+                            Page.Other
             in
             Editor.view subModel
                 |> frame framePage
@@ -383,10 +385,12 @@ updateCurrentPage page msg model =
             let
                 cmd =
                     -- If we just signed out, then redirect to Home.
-                    if session.user /= Nothing && user == Nothing then
-                        Route.replaceUrl Route.Home
-                    else
-                        Cmd.none
+                    case ( user, session.user ) of
+                        ( Nothing, Just _ ) ->
+                            Route.replaceUrl Route.Home
+
+                        _ ->
+                            Cmd.none
             in
             ( { model | session = { session | user = user } }
             , cmd
@@ -455,12 +459,14 @@ updateCurrentPage page msg model =
         ( EditorMsg subMsg, Editor slug subModel ) ->
             case model.session.user of
                 Nothing ->
-                    if slug == Nothing then
-                        errored Page.NewArticle
-                            "You must be signed in to post articles."
-                    else
-                        errored Page.Other
-                            "You must be signed in to edit articles."
+                    case slug of
+                        Nothing ->
+                            errored Page.NewArticle
+                                "You must be signed in to post articles."
+
+                        Just _ ->
+                            errored Page.Other
+                                "You must be signed in to edit articles."
 
                 Just user ->
                     toPage (Editor slug) EditorMsg (Editor.update user) subMsg subModel
