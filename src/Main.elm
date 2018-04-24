@@ -11,10 +11,13 @@ import Page.Article.Editor as Editor
 import Page.Errored as Errored exposing (PageLoadError)
 import Page.Home as Home
 import Page.Login as Login
+import Page.Test as Test
 import Page.NotFound as NotFound
 import Page.Profile as Profile
 import Page.Register as Register
 import Page.Settings as Settings
+import Page.Step1 as Step1
+import Page.Step2 as Step2
 import Ports
 import Route exposing (Route)
 import Task
@@ -35,6 +38,9 @@ type Page
     | Home Home.Model
     | Settings Settings.Model
     | Login Login.Model
+    | Test Test.Model
+    | Step1 Step1.Model
+    | Step2 Step2.Model
     | Register Register.Model
     | Profile Username Profile.Model
     | Article Article.Model
@@ -127,6 +133,21 @@ viewPage session isLoading page =
                 |> frame Page.Other
                 |> Html.map LoginMsg
 
+        Test subModel ->
+            Test.view session subModel
+                |> frame Page.Other
+                |> Html.map TestMsg
+
+        Step1 subModel ->
+            Step1.view session subModel
+                |> frame Page.Other
+                |> Html.map Step1Msg
+
+        Step2 subModel ->
+            Step2.view session subModel
+                |> frame Page.Other
+                |> Html.map Step2Msg
+
         Register subModel ->
             Register.view session subModel
                 |> frame Page.Other
@@ -206,6 +227,15 @@ pageSubscriptions page =
         Login _ ->
             Sub.none
 
+        Test _ ->
+            Sub.none
+
+        Step1 _ ->
+            Sub.none
+
+        Step2 _ ->
+            Sub.none
+
         Register _ ->
             Sub.none
 
@@ -233,6 +263,9 @@ type Msg
     | SettingsMsg Settings.Msg
     | SetUser (Maybe User)
     | LoginMsg Login.Msg
+    | TestMsg Test.Msg
+    | Step1Msg Step1.Msg
+    | Step2Msg Step2.Msg
     | RegisterMsg Register.Msg
     | ProfileMsg Profile.Msg
     | ArticleMsg Article.Msg
@@ -285,6 +318,15 @@ setRoute maybeRoute model =
 
         Just Route.Login ->
             { model | pageState = Loaded (Login Login.initialModel) } => Cmd.none
+
+        Just Route.Test ->
+            { model | pageState = Loaded (Test Test.initialModel) } => Cmd.none
+
+        Just Route.Step1 ->
+            { model | pageState = Loaded (Step1 Step1.initialModel) } => Cmd.none
+
+        Just Route.Step2 ->
+            { model | pageState = Loaded (Step2 Step2.initialModel) } => Cmd.none
 
         Just Route.Logout ->
             let
@@ -408,6 +450,54 @@ updatePage page msg model =
             in
             { newModel | pageState = Loaded (Login pageModel) }
                 => Cmd.map LoginMsg cmd
+
+        ( TestMsg subMsg, Test subModel ) ->
+            let
+                ( ( pageModel, cmd ), msgFromPage ) =
+                    Test.update subMsg subModel
+
+                newModel =
+                    case msgFromPage of
+                        Test.NoOp ->
+                            model
+
+                        Test.SetUser user ->
+                            { model | session = { user = Just user } }
+            in
+            { newModel | pageState = Loaded (Test pageModel) }
+                => Cmd.map TestMsg cmd
+
+        ( Step1Msg subMsg, Step1 subModel ) ->
+            let
+                ( ( pageModel, cmd ), msgFromPage ) =
+                    Step1.update subMsg subModel
+
+                newModel =
+                    case msgFromPage of
+                        Step1.NoOp ->
+                            model
+
+                        Step1.SetUser user ->
+                            { model | session = { user = Just user } }
+            in
+            { newModel | pageState = Loaded (Step1 pageModel) }
+                => Cmd.map Step1Msg cmd
+
+        ( Step2Msg subMsg, Step2 subModel ) ->
+            let
+                ( ( pageModel, cmd ), msgFromPage ) =
+                    Step2.update subMsg subModel
+
+                newModel =
+                    case msgFromPage of
+                        Step2.NoOp ->
+                            model
+
+                        Step2.SetUser user ->
+                            { model | session = { user = Just user } }
+            in
+            { newModel | pageState = Loaded (Step2 pageModel) }
+                => Cmd.map Step2Msg cmd
 
         ( RegisterMsg subMsg, Register subModel ) ->
             let

@@ -1,4 +1,4 @@
-module Request.User exposing (edit, login, register, storeSession)
+module Request.User exposing (edit, login, test, register, storeSession)
 
 import Data.AuthToken exposing (AuthToken, withAuthorization)
 import Data.User as User exposing (User)
@@ -35,6 +35,22 @@ login { email, password } =
     in
     Decode.field "user" User.decoder
         |> Http.post (apiUrl "/users/login") body
+
+test : { r | email : String, password : String } -> Http.Request User
+test { email, password } =
+    let
+        user =
+            Encode.object
+                [ "email" => Encode.string email
+                , "password" => Encode.string password
+                ]
+
+        body =
+            Encode.object [ "user" => user ]
+                |> Http.jsonBody
+    in
+    Decode.field "user" User.decoder
+        |> Http.post (apiUrl "/users/test") body
 
 
 register : { r | username : String, email : String, password : String } -> Http.Request User

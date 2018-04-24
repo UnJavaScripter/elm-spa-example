@@ -15,6 +15,7 @@ type Route
     = Home
     | Root
     | Login
+    | Test
     | Logout
     | Register
     | Settings
@@ -22,6 +23,8 @@ type Route
     | Profile Username
     | NewArticle
     | EditArticle Article.Slug
+    | Step1
+    | Step2
 
 
 route : Parser (Route -> a) a
@@ -29,6 +32,7 @@ route =
     oneOf
         [ Url.map Home (s "")
         , Url.map Login (s "login")
+        , Url.map Test (s "test")
         , Url.map Logout (s "logout")
         , Url.map Settings (s "settings")
         , Url.map Profile (s "profile" </> User.usernameParser)
@@ -36,6 +40,8 @@ route =
         , Url.map Article (s "article" </> Article.slugParser)
         , Url.map NewArticle (s "editor")
         , Url.map EditArticle (s "editor" </> Article.slugParser)
+        , Url.map Step1 (s "step1")
+        , Url.map Step2 (s "step2")
         ]
 
 
@@ -57,6 +63,9 @@ routeToString page =
                 Login ->
                     [ "login" ]
 
+                Test ->
+                    [ "test" ]
+
                 Logout ->
                     [ "logout" ]
 
@@ -77,6 +86,12 @@ routeToString page =
 
                 EditArticle slug ->
                     [ "editor", Article.slugToString slug ]
+                
+                Step1 ->
+                    [ "step1" ]
+                
+                Step2 ->
+                    [ "step2" ]
     in
     "#/" ++ String.join "/" pieces
 

@@ -57,51 +57,8 @@ init session =
 view : Session -> Model -> Html Msg
 view session model =
     div [ class "home-page" ]
-        [ viewBanner
-        , div [ class "container page" ]
-            [ div [ class "row" ]
-                [ div [ class "col-md-9" ] (viewFeed model.feed)
-                , div [ class "col-md-3" ]
-                    [ div [ class "sidebar" ]
-                        [ p [] [ text "Popular Tags" ]
-                        , viewTags model.tags
-                        ]
-                    ]
-                ]
-            ]
+        [ text "home!"
         ]
-
-
-viewBanner : Html msg
-viewBanner =
-    div [ class "banner" ]
-        [ div [ class "container" ]
-            [ h1 [ class "logo-font" ] [ text "conduit" ]
-            , p [] [ text "A place to share your knowledge." ]
-            ]
-        ]
-
-
-viewFeed : Feed.Model -> List (Html Msg)
-viewFeed feed =
-    div [ class "feed-toggle" ]
-        [ Feed.viewFeedSources feed |> Html.map FeedMsg ]
-        :: (Feed.viewArticles feed |> List.map (Html.map FeedMsg))
-
-
-viewTags : List Tag -> Html Msg
-viewTags tags =
-    div [ class "tag-list" ] (List.map viewTag tags)
-
-
-viewTag : Tag -> Html Msg
-viewTag tagName =
-    a
-        [ class "tag-pill tag-default"
-        , href "javascript:void(0)"
-        , onClick (SelectTag tagName)
-        ]
-        [ text (Article.tagToString tagName) ]
 
 
 
